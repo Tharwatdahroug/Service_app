@@ -45,8 +45,6 @@ class AuthProvider with ChangeNotifier {
         .signInWithEmailAndPassword(email: email, password: Password)
         .then((value) => print("UserLogin Scssed"))
         .catchError((error) => print("Failed to Login user: $error"));
-    ;
-
     notifyListeners();
   }
 

@@ -1,11 +1,11 @@
-class User {
-  User({
+class Users {
+  Users({
     required this.name,
     required this.email,
     required this.type,
   });
 
-  User.fromJson(Map<String, Object?> json)
+  Users.fromJson(Map<String, Object?> json)
       : this(
           name: json['Name']! as String,
           email: json['email']! as String,
