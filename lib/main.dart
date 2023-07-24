@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:service/Provider/AuthPorvider.dart';
+import 'package:service/Screen/Auth/Authhome.dart';
 import 'package:service/Screen/Auth/Sigup.dart';
 import 'package:service/firebase_options.dart';
 
@@ -26,6 +28,7 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+        builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         debugShowMaterialGrid: false,
         title: 'Flutter Demo',
@@ -33,7 +36,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: Sigup(),
+        home: AuthHome(),
       ),
     );
   }

@@ -40,6 +40,9 @@ dependencies:
   cloud_firestore: ^4.8.3
   provider: ^6.0.5
   shared_preferences: ^2.2.0
+  fluttertoast: ^8.2.2
+  awesome_dialog: ^3.1.0
+  google_sign_in: ^6.1.4
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +71,7 @@ flutter:
     - image/s.png
     - image/sign in.png
     - image/r.png
-    - image/d.png
+    - image/3.png
     - image/f.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

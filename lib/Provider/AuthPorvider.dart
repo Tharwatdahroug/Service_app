@@ -1,38 +1,55 @@
-// ignore_for_file: non_constant_identifier_names
-
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:service/Widget/alertToast.dart';
 import 'package:service/model/UserModel.dart';
 
+import '../Screen/home/Homepage.dart';
+
 class AuthProvider with ChangeNotifier {
+  final UsersRef =
+      FirebaseFirestore.instance.collection('users').withConverter<Users>(
+            fromFirestore: (snapshot, _) => Users.fromJson(snapshot.data()!),
+            toFirestore: (Users, _) => Users.toJson(),
+          );
   Future<void> SigupUser(
     String name,
     String email,
     String Password,
-    String type,
+    BuildContext context,
   ) async {
-    await FirebaseAuth.instance
-        // ignore: avoid_print
-        .createUserWithEmailAndPassword(email: email, password: Password)
-        .then((value) => print("UserSigup"))
-        // ignore: avoid_print
-        .catchError((error) => print("Failed to Sigup user: $error"));
-// ignore: unused_local_variable
-    final UsersRef =
-        FirebaseFirestore.instance.collection('users').withConverter<Users>(
-              fromFirestore: (snapshot, _) => Users.fromJson(snapshot.data()!),
-              toFirestore: (Users, _) => Users.toJson(),
-            );
-    await UsersRef.add(
-      Users(name: name, email: email, type: type),
-    )
-        // ignore: avoid_print
-        .then((value) => print("User Added"))
-        // ignore: avoid_print
-        .catchError((error) => print("Failed to add user: $error"));
+    try {
+      FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: Password)
+          .then((value) {
+        print("Created New Account");
+        UsersRef.add(
+          Users(
+            name: name,
+            email: email,
+          ),
+        ).then((value) => print("User Added"));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Homepage()));
+      });
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'weak-password') {
+        alertToast(
+            "البريد الألكتروني غير صالح !",
+            Color.fromRGBO(39, 39, 119, 1),
+            const Color.fromARGB(255, 244, 244, 244));
+      } else if (error.code == 'email-already-in-use') {
+        alertToast(
+            "البريد الألكتروني غير صالح !",
+            Color.fromRGBO(39, 39, 119, 1),
+            const Color.fromARGB(255, 244, 244, 244));
+      }
+    }
+// ignore: unused_local_variable, non_constant_identifier_names
 
     notifyListeners();
   }
@@ -40,11 +57,50 @@ class AuthProvider with ChangeNotifier {
   Future<void> Login(
     String email,
     String Password,
+    BuildContext context,
   ) async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: Password)
-        .then((value) => print("UserLogin Scssed"))
-        .catchError((error) => print("Failed to Login user: $error"));
+        .then((value) {
+      print("Created New Account");
+
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Homepage()));
+    });
+    notifyListeners();
+  }
+
+  Future<void> signInWithGoogle(context) async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // User? user = await FirebaseAuth.instance.currentUser;
+    if (userCredential.user != null) {
+      UsersRef.add(
+        Users(
+          name: userCredential.user!.displayName.toString(),
+          email: userCredential.user!.email.toString(),
+        ),
+      ).then((value) => print("User Added"));
+
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Homepage()));
+    }
+
     notifyListeners();
   }
 

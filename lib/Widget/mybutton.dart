@@ -7,15 +7,16 @@ class MyButton extends StatelessWidget {
   final double width;
   final double borderRadius;
   final Color colors;
+  final Color colorwrite;
 
-  MyButton({
-    required this.name,
-    required this.onPressed,
-    required this.colors,
-    required this.height,
-    required this.width,
-    required this.borderRadius,
-  });
+  MyButton(
+      {required this.name,
+      required this.onPressed,
+      required this.colors,
+      required this.height,
+      required this.width,
+      required this.borderRadius,
+      required this.colorwrite});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,7 +25,7 @@ class MyButton extends StatelessWidget {
       child: ElevatedButton(
         child: Text(
           name,
-          style: const TextStyle(color: Colors.white, fontSize: 20),
+          style: TextStyle(color: colorwrite, fontSize: 20),
         ),
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(colors),

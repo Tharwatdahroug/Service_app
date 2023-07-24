@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:service/Widget/AuthWeight.dart';
+import 'package:service/Widget/alertToast.dart';
 import 'package:service/Widget/mybutton.dart';
 import 'package:service/Widget/textfromfild.dart';
 import 'package:service/Provider/AuthPorvider.dart';
 
 class Sigup extends StatelessWidget {
-  const Sigup({super.key});
+  Sigup({super.key});
+
+  final TextEditingController _namecontroller = TextEditingController();
+  final TextEditingController _emailcontroller = TextEditingController();
+  final TextEditingController _passwordcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _namecontroller = TextEditingController();
-    final TextEditingController _emailcontroller = TextEditingController();
-    final TextEditingController _passwordcontroller = TextEditingController();
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -23,7 +25,7 @@ class Sigup extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 36),
               child: Image(
-                image: const AssetImage("image/r.png"),
+                image: const AssetImage("image/sign in.png"),
                 width: size.width,
                 height: size.height * 0.25,
               ),
@@ -44,10 +46,10 @@ class Sigup extends StatelessWidget {
                           vertical: 20, horizontal: 50),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Text(
-                            "Get Started",
+                            "تسجيل مستخدم جديد",
                             style: TextStyle(
                               color: Color.fromRGBO(96, 43, 213, 1),
                               fontSize: size.height / 25,
@@ -59,7 +61,7 @@ class Sigup extends StatelessWidget {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 35),
-                      child: AuthTextField("Enter UserName",
+                      child: AuthTextField("ادخل الاسم رباعى",
                           Icons.person_outline, false, _namecontroller),
                     ),
                     SizedBox(
@@ -67,35 +69,57 @@ class Sigup extends StatelessWidget {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 35),
-                      child: AuthTextField("Enter Email", Icons.person_outline,
-                          false, _emailcontroller),
+                      child: AuthTextField("ادخل البريد البريد الالكتروني",
+                          Icons.email_outlined, false, _emailcontroller),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 35),
-                      child: AuthTextField("Enter Password",
-                          Icons.person_outline, true, _passwordcontroller),
+                      child: AuthTextField("ادخل كلمه المرور",
+                          Icons.password_outlined, true, _passwordcontroller),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Consumer<AuthProvider>(builder: (context, Auth, child) {
                       return MyButton(
-                        name: 'SigUp',
+                        name: 'سجل الان',
                         colors: Color.fromRGBO(96, 43, 213, 1),
                         borderRadius: 20,
                         onPressed: () {
-                          Auth.SigupUser(
-                            _namecontroller.text,
-                            _emailcontroller.text,
-                            _passwordcontroller.text,
-                            "Male",
-                          );
+                          if (_emailcontroller.text.isNotEmpty &&
+                              _passwordcontroller.text.isNotEmpty) {
+                            if (_emailcontroller.text.contains("@")) {
+                              if (_passwordcontroller.text.length > 8) {
+                                Auth.SigupUser(
+                                    _namecontroller.text,
+                                    _emailcontroller.text,
+                                    _passwordcontroller.text,
+                                    context);
+                              } else {
+                                alertToast(
+                                    "كلمة المرور ضعيفة !",
+                                    Color.fromRGBO(39, 39, 119, 1),
+                                    const Color.fromARGB(255, 255, 255, 255));
+                              }
+                            } else {
+                              alertToast(
+                                  "البريد الألكتروني غير صالح !",
+                                  Color.fromRGBO(39, 39, 119, 1),
+                                  const Color.fromARGB(255, 244, 244, 244));
+                            }
+                          } else {
+                            alertToast(
+                                "رجاء قم بأدخال كل البيانات !",
+                                Color.fromRGBO(96, 43, 213, 1),
+                                const Color.fromARGB(255, 255, 254, 254));
+                          }
                         },
                         width: size.width / 2,
                         height: 50,
+                        colorwrite: Colors.white,
                       );
                     }),
                   ]),
